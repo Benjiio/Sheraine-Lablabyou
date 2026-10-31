@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Letter For You</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-color: #f6f2ec;
+            --paper-color: #fcfbf8;
+            --text-color: #34312e;
+            --accent-pink: #d8a7b1;
+            --heart-color: #4a4441;
+            --shadow: 0 12px 35px rgba(0,0,0,0.07);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Playfair Display', serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 18px;
+            position: relative;
+            overflow-x: hidden;
+            background-image: radial-gradient(#e4dcd2 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* --- Floating Hearts Container --- */
+        #hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(216, 167, 177, 0.4);
+            font-size: 1.2rem;
+            animation: floatUp 8s linear infinite;
+            bottom: -30px;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-105vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- Cute Loading Screen --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: var(--bg-color);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loader-heart {
+            font-size: 3rem;
+            color: var(--accent-pink);
+            animation: heartPulse 1.2s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        .loader-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+            color: #6e6763;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar {
+            width: 180px;
+            height: 6px;
+            background: #eae2d8;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--accent-pink);
+            border-radius: 10px;
+            animation: fillProgress 2s ease forwards;
+        }
+
+        @keyframes heartPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fillProgress {
+            to { width: 100%; }
+        }
+
+        /* --- Envelope Screen --- */
+        #envelope-screen {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(246, 242, 236, 0.96);
+            z-index: 500;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.03);
+        }
+
+        .envelope {
+            width: 280px;
+            height: 190px;
+            background: #ede6dc;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            border: 1px solid #e0d7cb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-top: 105px solid #dfd6c8;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+        }
+
+        .wax-seal {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            background: #b56576;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            font-size: 1.2rem;
+            border: 2px dashed rgba(255,255,255,0.4);
+        }
+
+        .tap-prompt {
+            margin-top: 25px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            color: #7a726d;
+            animation: bounce 1.8s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* --- Main Letter Card Container --- */
+        .page-container {
+            width: 100%;
+            max-width: 680px;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+        }
+
+        .letter-card {
+            background-color: var(--paper-color);
+            padding: 55px 44px;
+            border-radius: 4px;
+            box-shadow: var(--shadow);
+            position: relative;
+            border: 1px solid #f0eae1;
+        }
+
+        /* Vintage Paper Overlay */
+        .letter-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, transparent 60%, rgba(215, 204, 190, 0.12) 100%);
+            pointer-events: none;
+        }
+
+        /* Date Stamp */
+        .date-stamp {
+            position: absolute;
+            top: 32px;
+            right: 44px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.25rem;
+            color: #8c827a;
+        }
+
+        /* --- Header Section --- */
+        .header-area {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+            margin-top: 5px;
+            margin-bottom: 25px;
+        }
+
+        .drawn-heart {
+            width: 44px;
+            height: 40px;
+        }
+
+        .drawn-heart path {
+            fill: none;
+            stroke: var(--heart-color);
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .salutation {
+            font-family: 'Great Vibes', cursive;
+            font-size: 3.4rem;
+            color: #2b2825;
+            font-weight: normal;
+            line-height: 1;
+        }
+
+        /* Days Together Counter */
+        .days-counter {
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            color: #b56576;
+            background: #f8ebeb;
+            padding: 3px 14px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px dashed rgba(181, 101, 118, 0.4);
+            margin-top: 6px;
+        }
+
+        /* --- Scrapbook Polaroids Styling --- */
+        .polaroid {
+            background: #ffffff;
+            padding: 8px 8px 28px 8px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.09);
+            border-radius: 2px;
+            border: 1px solid #f0ede8;
+            transition: transform 0.3s ease, z-index 0.3s ease;
+            position: relative;
+        }
+
+        .polaroid:hover {
+            z-index: 30 !important;
+            transform: scale(1.05) rotate(0deg) !important;
+        }
+
+        .polaroid img {
+            width: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 1px;
+        }
+
+        .polaroid-caption {
+            font-family: 'Caveat', cursive;
+            font-size: 1.15rem;
+            color: #5c5550;
+            text-align: center;
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+        }
+
+        /* Washi Tape Accent */
+        .washi-tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 20px;
+            background: rgba(216, 167, 177, 0.55);
+            backdrop-filter: blur(1px);
+            border-left: 2px dashed rgba(255,255,255,0.4);
+            border-right: 2px dashed rgba(255,255,255,0.4);
+            z-index: 5;
+        }
+
+        /* Top 2 Polaroids Overlap Area */
+        .top-photos-group {
+            display: flex;
+            justify-content: flex-end;
+            margin: -20px 0 25px 0;
+            position: relative;
+            height: 180px;
+        }
+
+        .polaroid-top-left {
+            position: absolute;
+            width: 145px;
+            right: 110px;
+            top: 0;
+            transform: rotate(-7deg);
+            z-index: 1;
+        }
+        .polaroid-top-left img { height: 115px; }
+
+        .polaroid-top-right {
+            position: absolute;
+            width: 145px;
+            right: 0;
+            top: 15px;
+            transform: rotate(6deg);
+            z-index: 2;
+        }
+        .polaroid-top-right img { height: 115px; }
+
+        /* Middle Floating Polaroid (Next to Body Text) */
+        .polaroid-mid-float {
+            float: right;
+            width: 150px;
+            margin: 10px 0 15px 20px;
+            transform: rotate(4deg);
+            z-index: 5;
+        }
+        .polaroid-mid-float img { height: 120px; }
+
+        /* Bottom Polaroid (Near Sign-off) */
+        .polaroid-bottom-float {
+            float: left;
+            width: 145px;
+            margin: 10px 20px 15px 0;
+            transform: rotate(-5deg);
+            z-index: 5;
+        }
+        .polaroid-bottom-float img { height: 115px; }
+
+        /* Clearfix */
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        /* Reminders Card */
+        .reminder-card-container {
+            background: #fdfbf7;
+            border: 1px solid #eee7dd;
+            border-radius: 8px;
+            padding: 14px;
+            margin: 25px 0;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            clear: both;
+        }
+
+        .reminder-card-container:hover {
+            border-color: var(--accent-pink);
+            background: #fff;
+        }
+
+        .reminder-header {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #b56576;
+            margin-bottom: 5px;
+        }
+
+        .reminder-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.35rem;
+            color: #4a4441;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reminder-prompt {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.68rem;
+            color: #aaa;
+            margin-top: 3px;
+        }
+
+        /* --- Letter Body Text --- */
+        .letter-body {
+            font-size: 1.05rem;
+            line-height: 1.9;
+            color: var(--text-color);
+        }
+
+        .letter-body p {
+            margin-bottom: 22px;
+            text-align: justify;
+        }
+
+        /* --- Sign-off Section --- */
+        .sign-off {
+            margin-top: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            clear: both;
+        }
+
+        .signature {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.7rem;
+            color: #2b2825;
+            line-height: 1.2;
+        }
+
+        .french-phrase {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: #6e6763;
+            font-size: 1.05rem;
+        }
+
+        /* Response Buttons */
+        .response-section {
+            margin-top: 35px;
+            padding-top: 22px;
+            border-top: 1px dashed #e6ded3;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            clear: both;
+        }
+
+        .response-title {
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            color: #7a726d;
+        }
+
+        .response-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .btn-response {
+            background: #ffffff;
+            border: 1px solid #dcd4c9;
+            padding: 10px 16px;
+            border-radius: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.82rem;
+            color: #554f4a;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .btn-response:hover {
+            border-color: var(--accent-pink);
+            background: #fffafa;
+            color: #b56576;
+            transform: translateY(-2deg);
+        }
+
+        .response-toast {
+            font-family: 'Caveat', cursive;
+            font-size: 1.35rem;
+            color: #b56576;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            height: 24px;
+            margin-top: 4px;
+        }
+
+        /* Collapsible Secret P.S. Note */
+        .ps-container {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .ps-toggle {
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            color: #8c827a;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: color 0.2s ease;
+            display: inline-block;
+        }
+
+        .ps-toggle:hover {
+            color: #b56576;
+        }
+
+        .ps-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s ease, opacity 0.6s ease, margin 0.3s ease;
+            opacity: 0;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 0.98rem;
+            color: #5c5550;
+            background: #f6f2ec;
+            padding: 0 18px;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-pink);
+            text-align: left;
+            line-height: 1.7;
+        }
+
+        .ps-content.open {
+            max-height: 200px;
+            opacity: 1;
+            margin-top: 15px;
+            padding: 14px 18px;
+        }
+
+        /* Floating Audio Player */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #ffffff;
+            padding: 10px 18px;
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            border: 1px solid #eae2d8;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .music-player:hover {
+            transform: scale(1.05);
+        }
+
+        .music-player i {
+            color: var(--accent-pink);
+            font-size: 1.1rem;
+        }
+
+        .music-player span {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.8rem;
+            color: #6e6763;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding: 14px 8px;
+            }
+
+            .letter-card {
+                padding: 38px 20px;
+            }
+
+            .date-stamp {
+                top: 22px;
+                right: 20px;
+                font-size: 1.1rem;
+            }
+
+            .salutation {
+                font-size: 2.7rem;
+            }
+
+            .top-photos-group {
+                justify-content: center;
+                height: 150px;
+                margin: 10px 0 20px 0;
+            }
+
+            .polaroid-top-left {
+                width: 125px;
+                right: auto;
+                left: 15%;
+            }
+            .polaroid-top-left img { height: 95px; }
+
+            .polaroid-top-right {
+                width: 125px;
+                right: 15%;
+            }
+            .polaroid-top-right img { height: 95px; }
+
+            .polaroid-mid-float {
+                float: none;
+                width: 100%;
+                max-width: 190px;
+                margin: 15px auto;
+                display: block;
+            }
+            .polaroid-mid-float img { height: 135px; }
+
+            .polaroid-bottom-float {
+                float: none;
+                width: 100%;
+                max-width: 190px;
+                margin: 15px auto;
+                display: block;
+            }
+            .polaroid-bottom-float img { height: 135px; }
+
+            .letter-body {
+                font-size: 0.98rem;
+                line-height: 1.8;
+            }
+
+            .letter-body p {
+                margin-bottom: 18px;
+                text-align: left;
+            }
+
+            .btn-response {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Hearts -->
+    <div id="hearts-container"></div>
+
+    <!-- 1. Cute Loading Screen -->
+    <div id="loader">
+        <div class="loader-heart">♥</div>
+        <div class="loader-text">Teka nahihiya ang person</div>
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+    </div>
+
+    <!-- 2. Wax-Sealed Envelope Screen -->
+    <div id="envelope-screen" style="display: none; opacity: 0;">
+        <div class="envelope-wrapper" onclick="openEnvelope()">
+            <div class="envelope">
+                <div class="envelope-flap" id="flap"></div>
+                <div class="wax-seal">♥</div>
+            </div>
+        </div>
+        <div class="tap-prompt">Tap to open your letter</div>
+    </div>
+
+    <!-- 3. Main Letter Container -->
+    <div class="page-container" id="main-content">
+        <main class="letter-card">
+            
+            <div class="date-stamp" id="current-date">Today</div>
+
+            <div class="header-area">
+                <svg class="drawn-heart" viewBox="0 0 50 45">
+                    <path d="M 25,14 C 25,14 20,4 12,4 C 5,4 2,10 2,16 C 2,26 15,35 25,41 C 35,35 48,26 48,16 C 48,10 45,4 38,4 C 30,4 25,14 25,14 Z" />
+                </svg>
+                <h1 class="salutation">To Sheraine,</h1>
+                
+                <!-- Days Counter Badge -->
+                <div class="days-counter">
+                    <i class="fa-solid fa-heart" style="font-size: 0.8rem;"></i>
+                    <span id="days-count">...</span> days of loving you
+                </div>
+            </div>
+
+            <!-- Top Overlapping Photos (Polaroids 1 & 2) -->
+            <div class="top-photos-group">
+                <div class="polaroid polaroid-top-left">
+                    <div class="washi-tape"></div>
+                    <img src="us.jpeg" alt="Memory 1">
+                    <div class="polaroid-caption">us ♡</div>
+                </div>
+                <div class="polaroid polaroid-top-right">
+                    <div class="washi-tape"></div>
+                    <img src="thirstrap.jfif" alt="Memory 2">
+                    <div class="polaroid-caption">muntanga</div>
+                </div>
+            </div>
+
+            <!-- Reminders Tap Card -->
+            <div class="reminder-card-container" onclick="nextReminder()">
+                <div class="reminder-header">A quick reminder for you</div>
+                <div class="reminder-text" id="reminder-display">"You will never, ever stop being lovable to me."</div>
+                <div class="reminder-prompt">(tap for another reminder ✦)</div>
+            </div>
+
+            <!-- Letter Body Text with Embedded Floating Polaroids (3 & 4) -->
+            <article class="letter-body clearfix">
+                <p>I heard what you said kanina, na "as if tatagal relationship natin" thingy. Kahit sabihin mo na hindi mo sinabi 'yun, I heard it clearly, okay?</p>
+
+                <!-- Embedded Polaroid 3 -->
+                <div class="polaroid polaroid-mid-float">
+                    <div class="washi-tape"></div>
+                    <img src="cute.jfif" alt="Memory 3">
+                    <div class="polaroid-caption">always you</div>
+                </div>
+
+                <p>And I want you to be clear with me: bakit tingin mo na hindi tatagal, hmmm? If it's a joke, I don't like it, okay? And if it's you assuming na tatamarin ako sa 'yo someday or, among other things, like ako mag-che-cheat sa 'yo that will NEVER happen, understand?</p>
+
+                <p>You will never, ever stop being lovable to me, even if may mga bagay na hindi tayo nagkakagree in some cases, okay? I love you dearly for your whole personality and how you present yourself, and seeing you have doubts about us makes me feel like I'm the one doing something that's making you not feel special to me.</p>
+
+                <!-- Embedded Polaroid 4 -->
+                <div class="polaroid polaroid-bottom-float">
+                    <div class="washi-tape"></div>
+                    <img src="photobooth.jpg" alt="Memory 4">
+                    <div class="polaroid-caption">together ♥</div>
+                </div>
+
+                <p>But if it's the former naman na you're slowly falling out of love for me then let's talk about it first before you think about anything, okay? Just know na I'm always here and always ready for you. Alam kong weird, pero the fact that we had sex is very important to me as a sign of love hindi lang 'yun basta libog sa 'yo, because I CHOSE to do it with you, okay? I'd never do that to anyone else in this world aside from you.</p>
+
+                <p>So just speak to me if you have any doubts, okay? So that we can fix it together.</p>
+
+                <p>I love you and I always will, and that will never change till death do us part. I accept you, flaws and all, and I will happily marry you and stay with you for the rest of my life.</p>
+            </article>
+
+            <!-- Sign-off Signature -->
+            <footer class="sign-off">
+                <div class="french-phrase">You are, and always will be, ma meilleure ennemie.</div>
+                <div class="signature">Made by someone who loves you🤍</div>
+            </footer>
+
+            <!-- Response Buttons -->
+            <div class="response-section">
+                <div class="response-title">Whenever you're ready...</div>
+                <div class="response-buttons">
+                    <button class="btn-response" onclick="selectResponse(1)">🧷 Let's talk in person / on call</button>
+                    <button class="btn-response" onclick="selectResponse(2)">🤍 I'm reading this, I love you too</button>
+                </div>
+                <div class="response-toast" id="response-toast"></div>
+            </div>
+
+            <!-- Collapsible Secret P.S. Note -->
+            <div class="ps-container">
+                <div class="ps-toggle" onclick="togglePS()">P.S. Tap here... 💌</div>
+                <div class="ps-content" id="ps-box">
+                    P.S. gusto ko ng long message tsaka long vm ah nag effort ako dito HAHAHAHA
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Background Music Audio Player -->
+    <div class="music-player" onclick="toggleMusic()">
+        <i class="fa-solid fa-music" id="music-icon"></i>
+        <span id="music-text">Play Song</span>
+        <audio id="bg-music" loop preload="auto">
+            <source src="New West - Those Eyes (Lyrics).mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        // Set dynamic formatted date safely
+        const currentDateEl = document.getElementById('current-date');
+        if (currentDateEl) {
+            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateEl.textContent = new Date().toLocaleDateString('en-US', dateOptions);
+        }
+
+        // Days Together Counter (May 6, 2026)
+        const daysCountEl = document.getElementById('days-count');
+        if (daysCountEl) {
+            const startDate = new Date('2026-05-06');
+            const today = new Date();
+            const diffTime = Math.abs(today - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            daysCountEl.textContent = diffDays;
+        }
+
+        // Reminders Array
+        const reminders = [
+            '"You will never, ever stop being lovable to me."',
+            '"I chose you, and I would never choose anyone else."',
+            '"Ill always love you even if we fight."',
+            '"I accept you, flaws and all, for the rest of my life."',
+            '"You are, and always will be, ma meilleure ennemie."'
+        ];
+        let reminderIndex = 0;
+        function nextReminder() {
+            const display = document.getElementById('reminder-display');
+            if (!display) return;
+            reminderIndex = (reminderIndex + 1) % reminders.length;
+            display.style.opacity = '0';
+            setTimeout(() => {
+                display.textContent = reminders[reminderIndex];
+                display.style.opacity = '1';
+            }, 180);
+        }
+
+        // Response Buttons
+        function selectResponse(option) {
+            const toast = document.getElementById('response-toast');
+            if (!toast) return;
+            if (option === 1) {
+                toast.textContent = "I'm right here whenever you're ready to call or meet up. ♥";
+            } else {
+                toast.textContent = "I love you so much. Thank you for reading this. ♥";
+            }
+            toast.style.opacity = '1';
+            
+            // Spawn extra heart bursts
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createHeart, i * 150);
+            }
+        }
+
+        // Toggle Secret P.S. Note
+        function togglePS() {
+            const psBox = document.getElementById('ps-box');
+            if (psBox) psBox.classList.toggle('open');
+        }
+
+        // Generate Faint Floating Hearts
+        const heartsContainer = document.getElementById('hearts-container');
+        function createHeart() {
+            if (!heartsContainer) return;
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = '♥';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 4 + 6 + 's';
+            heart.style.fontSize = Math.random() * 1 + 0.8 + 'rem';
+            heartsContainer.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 10000);
+        }
+        setInterval(createHeart, 800);
+
+        // Handle Loader -> Envelope Transition safely
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            const envelopeScreen = document.getElementById('envelope-screen');
+            
+            if (loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    if (envelopeScreen) {
+                        envelopeScreen.style.display = 'flex';
+                        setTimeout(() => {
+                            envelopeScreen.style.opacity = '1';
+                        }, 50);
+                    }
+                }, 800);
+            }
+        }, 2200);
+
+        // Handle Envelope Unsealing, Instant Auto-Play, & Card Reveal
+        let isPlaying = false;
+        function openEnvelope() {
+            const flap = document.getElementById('flap');
+            const envelopeScreen = document.getElementById('envelope-screen');
+            const mainContent = document.getElementById('main-content');
+            
+            // Instant Music Auto-Play on Envelope Tap
+            const audio = document.getElementById('bg-music');
+            const text = document.getElementById('music-text');
+            const icon = document.getElementById('music-icon');
+            
+            if (audio) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    if (text) text.textContent = 'Pause Song';
+                    if (icon) {
+                        icon.classList.remove('fa-music');
+                        icon.classList.add('fa-pause');
+                    }
+                }).catch(e => {
+                    console.log("Autoplay failed:", e);
+                });
+            }
+
+            // Unseal Envelope Animation & Reveal Page
+            if (flap) flap.style.transform = 'rotateX(180deg)';
+            
+            setTimeout(() => {
+                if (envelopeScreen) envelopeScreen.style.opacity = '0';
+                setTimeout(() => {
+                    if (envelopeScreen) envelopeScreen.style.display = 'none';
+                    if (mainContent) {
+                        mainContent.style.opacity = '1';
+                        mainContent.style.transform = 'translateY(0)';
+                    }
+                }, 800);
+            }, 600);
+        }
+
+        // Toggle Music (Pause / Resume Controls)
+        function toggleMusic() {
+            const audio = document.getElementById('bg-music');
+            const text = document.getElementById('music-text');
+            const icon = document.getElementById('music-icon');
+            
+            if (!audio) return;
+
+            if (!isPlaying) {
+                audio.play();
+                if (text) text.textContent = 'Pause Song';
+                if (icon) {
+                    icon.classList.remove('fa-music');
+                    icon.classList.add('fa-pause');
+                }
+                isPlaying = true;
+            } else {
+                audio.pause();
+                if (text) text.textContent = 'Play Song';
+                if (icon) {
+                    icon.classList.remove('fa-pause');
+                    icon.classList.add('fa-music');
+                }
+                isPlaying = false;
+            }
+        }
+    </script>
+</body>
+</html>
